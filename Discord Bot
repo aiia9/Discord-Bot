@@ -1,8 +1,13 @@
 import discord
 from discord.ext import commands
+import random
+import os
 
+# Переменная intents - хранит привилегии бота
 intents = discord.Intents.default()
+# Включаем привелегию на чтение сообщений
 intents.message_content = True
+# Создаем бота в переменной client и передаем все привелегии
 
 bot = commands.Bot(command_prefix='/', intents=intents)
 
@@ -10,12 +15,42 @@ bot = commands.Bot(command_prefix='/', intents=intents)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
+@bot.event
+async def on_message(message):
+    if message.content.startswith('Как у тебя дела?'):
+        await message.channel.send(f'Хорошо, а у тебя?')
+    elif message.content.startswith('Какие у тебя есть команды?'):
+        await message.channel.send(f'Напиши /bothelp для список команд!')
+
 @bot.command()
 async def hello(ctx):
+    """Сказать привет"""
     await ctx.send(f'Привет! Я бот {bot.user}!')
 
 @bot.command()
 async def joined(ctx, member: discord.Member):
+    """Приветствует новеньких на этот сервер"""
     await ctx.send(f'{member.name} joined {discord.utils.format_dt(member.joined_at)}')
+
+@bot.command()
+async def joke(ctx):
+    """Сказать шутку"""
+    jokelist = ('Шутка 1', 'Шутка 2', 'Шутка 3', 'Шутка 4')
+    joke = random.choice(jokelist)
+    await ctx.send(f'{joke}')
+
+@bot.command()
+async def bothelp(ctx):
+    """Выводит список команд"""
+    await ctx.send(f'Список команд: /bothelp; /hello; /joke; /stimages')
+    
+@bot.command()
+async def stimages(ctx):
+    """Показывает случайные картинки по сериалу Skibidi Toilet"""
+    img_name = random.choice(os.listdir('images'))
+    with open(f'images/{img_name}', 'rb') as f:
+            picture = discord.File(f)
+   # Можем передавать файл как параметр!
+    await ctx.send(file=picture)
 
 bot.run("token")
