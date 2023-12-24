@@ -46,7 +46,7 @@ async def bothelp(ctx):
     
 @bot.command()
 async def stimages(ctx):
-    """Показывает случайные картинки по сериалу Skibidi Toilet"""
+    """Показывает случайную картинку из альбома"""
     img_name = random.choice(os.listdir('images'))
     with open(f'images/{img_name}', 'rb') as f:
             picture = discord.File(f)
